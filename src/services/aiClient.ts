@@ -282,7 +282,8 @@ export const generateEmbedding = async (
         }
       : input;
 
-  const result = await model.embedContent(request);
+  // The SDK's TaskType typing is stricter than the API accepts; cast to avoid build-time mismatch.
+  const result = await model.embedContent(request as any);
 
   return result.embedding.values;
 };
