@@ -1,5 +1,5 @@
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Work_Sans } from "next/font/google";
 import ServiceWorker from "@/components/ServiceWorker";
 
@@ -18,7 +18,10 @@ const workSans = Work_Sans({
 export const metadata: Metadata = {
   title: "NeuroVital - Unified Health Intelligence Platform",
   description: "NeuroVital is a preventive health dashboard for medical insight and mental wellness reflection.",
-  manifest: "/manifest.webmanifest",
+  manifest: "/manifest.webmanifest"
+};
+
+export const viewport: Viewport = {
   themeColor: "#0B0F14"
 };
 
