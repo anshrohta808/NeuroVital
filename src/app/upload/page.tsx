@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import PdfUploadForm from "@/components/PdfUploadForm";
@@ -10,7 +10,10 @@ import PageNav from "@/components/PageNav";
 
 export default function UploadPage() {
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(
+    () => (typeof window === "undefined" ? null : createSupabaseBrowserClient()),
+    []
+  );
   const [reports, setReports] = useState<any[]>([]);
 
   const fetchReports = async () => {
@@ -31,9 +34,9 @@ export default function UploadPage() {
   };
 
   useEffect(() => {
+    if (!supabase) return;
     fetchReports();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [supabase]);
 
   return (
     <div className="dashboard-shell">

@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { MedicalInsightResponse, MoodLogInput, FamilyHistoryInput, LabReportMetrics, VitalsInput } from "@/lib/types";
@@ -137,7 +137,10 @@ const downloadPdf = (blob: Blob, filename: string) => {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(
+    () => (typeof window === "undefined" ? null : createSupabaseBrowserClient()),
+    []
+  );
   const [loading, setLoading] = useState(true);
   const [vitals, setVitals] = useState<VitalsInput | null>(null);
   const [familyHistory, setFamilyHistory] = useState<FamilyHistoryInput | null>(null);
@@ -172,9 +175,9 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
+    if (!supabase) return;
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [supabase]);
 
   const riskTags = computeRiskTags(vitals, familyHistory, labMetrics);
   const bmi = vitals ? computeBMI(vitals.height_cm, vitals.weight_kg) : null;
@@ -190,6 +193,7 @@ export default function DashboardPage() {
   };
 
   const signOut = async () => {
+    if (!supabase) return;
     await supabase.auth.signOut();
     router.push("/login");
   };

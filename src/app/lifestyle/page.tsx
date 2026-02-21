@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageNav from "@/components/PageNav";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -104,12 +104,16 @@ const PillList = ({
 
 export default function LifestylePage() {
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(
+    () => (typeof window === "undefined" ? null : createSupabaseBrowserClient()),
+    []
+  );
   const [insight, setInsight] = useState<LifestyleInsightResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!supabase) return;
     const checkUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (!data.user) {
@@ -117,8 +121,7 @@ export default function LifestylePage() {
       }
     };
     checkUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [router, supabase]);
 
   const generate = async () => {
     setLoading(true);

@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { MedicalInsightResponse } from "@/lib/types";
 import PageNav from "@/components/PageNav";
@@ -10,12 +10,16 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export default function InsightsPage() {
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(
+    () => (typeof window === "undefined" ? null : createSupabaseBrowserClient()),
+    []
+  );
   const [insight, setInsight] = useState<MedicalInsightResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!supabase) return;
     const checkUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (!data.user) {
@@ -23,8 +27,7 @@ export default function InsightsPage() {
       }
     };
     checkUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [router, supabase]);
 
   const generate = async () => {
     setLoading(true);
