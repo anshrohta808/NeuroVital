@@ -4,6 +4,8 @@
 
 :root {
   color-scheme: light;
+  --font-heading: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   --background: 60 56% 91%;
   --foreground: 221 39% 11%;
   --muted: 60 30% 88%;

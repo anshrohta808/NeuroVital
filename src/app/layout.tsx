@@ -1,19 +1,6 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, Work_Sans } from "next/font/google";
 import ServiceWorker from "@/components/ServiceWorker";
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-heading",
-  display: "swap"
-});
-
-const workSans = Work_Sans({
-  subsets: ["latin"],
-  variable: "--font-body",
-  display: "swap"
-});
 
 export const metadata: Metadata = {
   title: "NeuroVital - Unified Health Intelligence Platform",
@@ -32,10 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`${spaceGrotesk.variable} ${workSans.variable} font-sans`}
-        suppressHydrationWarning
-      >
+      <body className="font-sans" suppressHydrationWarning>
         {children}
         <ServiceWorker />
       </body>

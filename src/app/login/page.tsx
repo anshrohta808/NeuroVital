@@ -1,12 +1,17 @@
 "use client";
 
-import { useState } from "react";
+export const dynamic = "force-dynamic";
+
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(
+    () => (typeof window === "undefined" ? null : createSupabaseBrowserClient()),
+    []
+  );
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,6 +24,11 @@ export default function LoginPage() {
     setMessage(null);
 
     try {
+      if (!supabase) {
+        setMessage("Auth is not ready yet. Please try again.");
+        setLoading(false);
+        return;
+      }
       const action =
         mode === "signin"
           ? supabase.auth.signInWithPassword({ email, password })

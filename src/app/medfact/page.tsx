@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+export const dynamic = "force-dynamic";
+
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageNav from "@/components/PageNav";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -20,7 +22,10 @@ const formatResponse = (payload: MedFactChatResponse) => {
 
 export default function MedFactPage() {
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(
+    () => (typeof window === "undefined" ? null : createSupabaseBrowserClient()),
+    []
+  );
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: "assistant", content: "Hello! How can I help you today?" }
   ]);
@@ -29,6 +34,7 @@ export default function MedFactPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!supabase) return;
     const checkUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (!data.user) {
@@ -36,8 +42,7 @@ export default function MedFactPage() {
       }
     };
     checkUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [router, supabase]);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
